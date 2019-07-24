@@ -1,0 +1,24 @@
+syntax = "proto3";
+package service;
+import "bitbucket-repository-management-service/dm/proto-files/domain/todo.proto";
+
+option go_package = "bitbucket-repository-management-service/dm/grpc/service";
+
+
+// Service to manage list of todo tasks
+service ToDoService {
+    // Create new todo task
+    rpc Create(domain.CreateRequest) returns (domain.CreateResponse);
+
+    // Read todo task
+    rpc Read(domain.ReadRequest) returns (domain.ReadResponse);
+
+    // Update todo task
+    rpc Update(domain.UpdateRequest) returns (domain.UpdateResponse);
+
+    // Delete todo task
+    rpc Delete(domain.DeleteRequest) returns (domain.DeleteResponse);
+
+    // Read all todo tasks
+    rpc ReadAll(domain.ReadAllRequest) returns (domain.ReadAllResponse);
+}
