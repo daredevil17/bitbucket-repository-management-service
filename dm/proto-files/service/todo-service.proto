@@ -1,24 +1,80 @@
 syntax = "proto3";
 package service;
-import "bitbucket-repository-management-service/dm/proto-files/domain/todo.proto";
+import "todo.proto";
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
 
 option go_package = "bitbucket-repository-management-service/dm/grpc/service";
 
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+	info: {
+		title: "ToDo service";
+		version: "1.0";
+		contact: {
+			name: "go-grpc-http-rest-microservice-tutorial project";
+			url: "https://github.com/daredevil17/bitbucket-repository-management-service";
+			email: "test@test.com";
+        };
+    };
+    schemes: HTTP;
+    consumes: "application/json";
+    produces: "application/json";
+    responses: {
+		key: "404";
+		value: {
+			description: "Returned when the resource does not exist.";
+			schema: {
+				json_schema: {
+					type: STRING;
+				}
+			}
+		}
+	}
+};
 
 // Service to manage list of todo tasks
 service ToDoService {
     // Create new todo task
-    rpc Create(domain.CreateRequest) returns (domain.CreateResponse);
+    rpc Create(domain.CreateRequest) returns (domain.CreateResponse) {
+        option (google.api.http) = {
+            post: "/todo"
+            body: "*"
+        };
+    }
 
     // Read todo task
-    rpc Read(domain.ReadRequest) returns (domain.ReadResponse);
+    rpc Read(domain.ReadRequest) returns (domain.ReadResponse){
+        option (google.api.http) = {
+            post: "/todo/{id}"
+            body: "*"
+        };
+    }
 
     // Update todo task
-    rpc Update(domain.UpdateRequest) returns (domain.UpdateResponse);
+    rpc Update(domain.UpdateRequest) returns (domain.UpdateResponse){
+        option (google.api.http) = {
+            put: "/todo/{toDo.id}"
+            body: "*"
+
+            additional_bindings {
+                patch: "/todo/{toDo.id}"
+                body: "*"
+            }
+        };
+    }
 
     // Delete todo task
-    rpc Delete(domain.DeleteRequest) returns (domain.DeleteResponse);
+    rpc Delete(domain.DeleteRequest) returns (domain.DeleteResponse) {
+        option (google.api.http) = {
+            delete: "/todo/{id}"
+        };
+    }
 
     // Read all todo tasks
-    rpc ReadAll(domain.ReadAllRequest) returns (domain.ReadAllResponse);
+    rpc ReadAll(domain.ReadAllRequest) returns (domain.ReadAllResponse) {
+        option (google.api.http) = {
+            get: "/todo/all"
+        };
+    }
 }

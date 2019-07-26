@@ -2,9 +2,12 @@ syntax = "proto3";
 
 package domain;
 
-option go_package = "bitbucket-repository-management-service/dm/grpc/domain";
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
 
 import "google/protobuf/timestamp.proto";
+option go_package = "bitbucket-repository-management-service/dm/grpc/domain";
 
 // Taks we have to do
 message ToDo {
