@@ -1,6 +1,7 @@
-export GO_PATH=/Users/amehrotra/workspace/Go
+export GO_PATH=$HOME/workspace/Go
 export PROTO_PATH=$GO_PATH/src/bitbucket-repository-management-service/dm/proto-files
-export PATH=$PATH:$GO_PATH/bin
+#add this path to ensure all protoc plugins can execute
+export PATH=$PATH:$GO_PATH/bin 
 
 protoc -I $GO_PATH/src --go_out=$GO_PATH/src $PROTO_PATH/domain/repository.proto
 protoc -I $GO_PATH/src --go_out=plugins=grpc:$GO_PATH/src $PROTO_PATH/service/repository-service.proto
