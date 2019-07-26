@@ -3,6 +3,8 @@ package cmd
 import (
 	"bitbucket-repository-management-service/dm/grpc/impl"
 	"bitbucket-repository-management-service/pkg/protocol/grpc"
+	"bitbucket-repository-management-service/pkg/protocol/rest"
+
 	"context"
 	"database/sql"
 	"flag"
@@ -19,6 +21,9 @@ type Config struct {
 	// gRPC is TCP port to listen by gRPC server
 	GRPCPort string
 
+	// HTTP/REST gateway start parameters section
+	// HTTPPort is TCP port to listen by HTTP/REST gateway
+	HTTPPort string
 	// DB Datastore parameters section
 	// DatastoreDBHost is host of database
 	DatastoreDBHost string
@@ -38,14 +43,20 @@ func RunServer() error {
 	// get configuration
 	var cfg Config
 	flag.StringVar(&cfg.GRPCPort, "grpc-port", "", "gRPC port to bind")
+	flag.StringVar(&cfg.HTTPPort, "http-port", "", "HTTP port to bind")
 	flag.StringVar(&cfg.DatastoreDBHost, "db-host", "", "Database host")
 	flag.StringVar(&cfg.DatastoreDBUser, "db-user", "", "Database user")
 	flag.StringVar(&cfg.DatastoreDBPassword, "db-password", "", "Database password")
 	flag.StringVar(&cfg.DatastoreDBSchema, "db-schema", "", "Database schema")
+
 	flag.Parse()
 
 	if len(cfg.GRPCPort) == 0 {
 		return fmt.Errorf("invalid TCP port for gRPC server: '%s'", cfg.GRPCPort)
+	}
+
+	if len(cfg.HTTPPort) == 0 {
+		return fmt.Errorf("invalid TCP port for HTTP gateway: '%s'", cfg.HTTPPort)
 	}
 
 	fmt.Println(cfg.DatastoreDBUser)
@@ -72,17 +83,13 @@ func RunServer() error {
 	if err != nil {
 		return fmt.Errorf("failed to open database: %v", err)
 	}
-	/*
-		stmtIns, err := db.Query("insert into test values('John', 'D.', 'Doe')")
-		if err != nil {
-			panic(err)
-		}
-		// Close the statement when we leave main() / the program terminates
-		defer stmtIns.Close()
-	*/
 	defer db.Close()
 
 	v1API := impl.NewToDoServiceServer(db)
+
+	go func() {
+		_ = rest.RunServer(ctx, cfg.GRPCPort, cfg.HTTPPort)
+	}()
 
 	return grpc.RunServer(ctx, v1API, cfg.GRPCPort)
 }
