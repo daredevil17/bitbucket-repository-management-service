@@ -1,6 +1,6 @@
 # bitbucket-repository-management-service
 #server start
-#go run todo-main.go -grpc-port=9090 -http-port=8080 -db-host=127.0.0.1:3306 -db-user=root -db-password=<pass> -db-schema=testdb
+#go run cmd/grpc/server/server-todo-main.go -grpc-port=9090 -http-port=8080 -db-host=127.0.0.1:3306 -db-user=root -db-password=<pass> -db-schema=testdb
 
 #client rest test
 #cd bitbucket-repository-management-service/cmd/client-rest
@@ -8,4 +8,4 @@
 
 #client grpc test
 #cd bitbucket-repository-management-service/cmd/grpc/client/
-#go run main-todo.go -server=localhost:9090
+#go run client-todo-main.go -server=localhost:9090
